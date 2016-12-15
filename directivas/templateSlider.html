@@ -1,0 +1,5 @@
+<div class="slider">
+	<div class="slide" ng-repeat="image in images" ng-show="image.visible">
+		<img ng-click="next()" ng-src="img/{{image.src}}" height="150" width="180"/>
+	</div>
+</div>

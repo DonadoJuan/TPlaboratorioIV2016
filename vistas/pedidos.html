@@ -1,0 +1,323 @@
+
+	<div class="container">
+	<span us-spinner spinner-key="spinner"></span>
+		<div class="page-header">
+			<center> <h1> Pedidos</h1>   </center>
+		<center><h3 ng-if="!pedidos.length"> No hay pedidos cargados </h3></center>
+		<table id="pedT" ng-repeat="pedido in pedidos| pedidoF" class="table table-striped table-bordered">
+			<th ng-if="acceso.emp">Cliente {{pedido.nombre}}</th>
+			<th ng-if="!acceso.emp"> <strong> Mis pedidos </strong></th>
+			<tr class="success">
+			    <th>PRODUCTO/OFERTA</th>
+			    <th>PRECIO UNIDAD</th> 
+			    <th>CANTIDAD</th>
+			    <th>TOTAL</th>
+			</tr>
+			<tr class="success" ng-repeat="producto in pedido.productos">
+
+				<td> {{producto.nombre}} </td>
+				<td> ${{producto.precio}} </td>
+				<td> {{producto.cantidad}} </td>
+				<td> ${{producto.precio * producto.cantidad}} </td>
+			</tr>
+			<tr class="success" ng-repeat="oferta in pedido.ofertas">
+
+				<td> {{oferta.nombre}} </td>
+				<td> ${{oferta.precio}} </td>
+				<td> {{oferta.cantidad}} </td>
+				<td> ${{oferta.precio * oferta.cantidad}} </td>
+			</tr>
+			<tr class="warning">
+				<th>FECHA</th>
+				<th>ESTADO</th>
+				<th>OPCIONES</th>
+				<th>TOTAL PEDIDO</th>
+			</tr>
+			<tr class="warning">
+				<td>{{pedido.fecha | date:'dd/MM/yyyy'}}</td>
+				<td>{{pedido.estado}}</td>
+				<td>
+				<button class="btn btn-danger btn-md" ng-click="eliminarPed(pedido.idPedido)">Eliminar</button>
+				<button class="btn btn-default btn-md" data-toggle="modal" data-target="#modForm" 
+				ng-click="modoMod(pedido)">Modificar</button>
+
+				<button class="btn btn-warning btn-md" ng-click="cambiarEstado(pedido)">cambiar estado
+				</button>
+				</td>
+				<td>${{pedido.total}}</td>
+			</tr>		    
+		</table>
+
+				<div class="page-header">
+			<center> <h1> Alta pedido</h1>     
+				</div>
+				<form name="pedidoF">
+
+				<div class="form-group" ng-if="acceso.emp">
+				<label for="cl">Cliente</label>
+				<div ng-if="!cl.length"><span>No hay clientes registrados</span></div>
+				<div ng-hide="!cl.length">
+				<select id="cl" class="form-control" ng-model="pedidoForm.idCliente" required>
+				<option ng-repeat="cliente in cl = (clientes | clienteF)" ng-value="{{cliente.idUsuario}}">
+				{{cliente.nombre}}</option>
+				</select>
+				</div>
+				</div>
+
+				<div class="form-group">
+				<label for="fechped">Fecha de pedido</label>
+				<input id="fechped" class="form-control" type="date" min="{{date.min}}" max="{{date.max}}" datebinding ng-model="pedidoForm.fecha" required>
+				</div>
+
+				<div class="form-group">
+				<label for="prod">Productos</label>
+				<select class="form-control" ng-model="pedidoForm.productos" ng-options="producto as producto.nombre+'   $'+producto.precio for producto in productos track by producto.nombre" ng-required="!pedidoForm.ofertas" multiple></select>
+				</div>
+
+				<div class="form-group">
+				<label for="ofer">Ofertas</label>
+				<select id="ofer" class="form-control" ng-model="pedidoForm.ofertas"
+				ng-options="oferta as oferta.nombre for oferta in ofertas track by oferta.nombre" 
+				multiple ng-required="!pedidoForm.productos"></select>
+				</div>
+
+				<div class="form-group">
+
+				<label for="ped">Listado pedido</label>
+
+				<ul class="list-group">
+
+				<label>Productos</label>
+    			  <ul class="list-group">
+    				<li class="list-group-item" ng-repeat="producto in pedidoForm.productos">
+    				{{producto.nombre}}  
+    				<input type="number" min="1" numericbinding required ng-change="calcularTotal(pedidoForm)" ng-model="pedidoForm.productos[$index].cantidad">
+    				</li>
+  				  </ul>
+
+  				<label>Ofertas</label>
+  				  <ul class="list-group">
+    				<li class="list-group-item" ng-repeat="oferta in pedidoForm.ofertas">
+    				{{oferta.nombre}}  
+    				<input type="number" min="1" numericbinding ng-change="calcularTotal(pedidoForm)" ng-model="pedidoForm.ofertas[$index].cantidad" required>
+    				</li>
+  				  </ul>
+  				</ul>
+				</div>
+
+				<div class="form-group">
+					<label for="total">TOTAL</label>
+					<div id="total">${{pedidoForm.total}}</div>
+				</div>
+
+				<button type="submit" ng-if="!acceso.emp" class="btn btn-warning" data-toggle="modal" data-target="#encForm" name="guardar"
+				ng-click="altaMod(pedidoForm)" ng-disabled="pedidoF.$invalid">
+				<span class="glyphicon glyphicon-save">&nbsp;</span>realizar pedido!</button>
+
+				<button type="submit" ng-if="acceso.emp" 
+				class="btn btn-warning btn-lg"
+				ng-click="altaMod(pedidoForm)" ng-disabled="pedidoF.$invalid">
+				<span class="glyphicon glyphicon-save">&nbsp;</span>realizar pedido!</button>
+			</div>
+			</form>			
+		</div>
+
+<div id="encForm" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Encuesta de satisfacción</h4>
+      </div>
+      <div class="modal-body">
+
+		<form name="encF" class="form-horizontal">
+		<fieldset>
+		<!-- Multiple Radios (inline) -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="radios">¿Como calificaria el servicio del local?</label>
+		  <div class="col-md-4">
+		  <div class="radio">
+		    <label for="radios-0">
+		      <input type="radio" ng-model="encuestaForm.cs" value="1" required>
+		      Mala
+		    </label>
+		  </div>
+		  <div class="radio">
+		    <label for="radios-1">
+		      <input type="radio" ng-model="encuestaForm.cs" value="2" required>
+		      Regular
+		    </label>
+			</div>
+		  <div class="radio">
+		    <label for="radios-0">
+		      <input type="radio"  ng-model="encuestaForm.cs" value="3" required >
+		      Bueno
+		    </label>
+		    <div class="radio">
+		      <label for="radios-0">
+		        <input type="radio" ng-model="encuestaForm.cs" value="4" required>
+		        Muy bueno
+		      </label>
+		  	</div>
+		  	<div class="radio">
+		  	    <label for="radios-0">
+		  	      <input type="radio" ng-model="encuestaForm.cs" value="5" required>
+		  	     Excelente
+		  	    </label>
+		  	</div>
+			</div>
+		  </div>
+		</div>
+
+		<!-- Productos favoritos -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="checkboxes">Seleccione sus productos favoritos</label>
+		  <div class="col-md-4">
+		  <div ng-repeat="producto in productos" class="checkbox">
+		    <label for="checkboxes-0">
+		      <input type="checkbox" ng-model="encuestaForm.prodfav[$index]" ng-true-value="{{producto.idProducto}}">
+		      {{producto.nombre}}
+		    </label>
+			</div>
+		  </div>
+		</div>
+
+		<!-- motivo entero local -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="">¿Como se entero de nuestro local?</label>  
+		  <div class="col-md-4">
+		  <input ng-model="encuestaForm.motivo" placeholder="motivo..." class="form-control input-md" required>
+		    
+		  </div>
+		</div>
+
+		<!-- Opinion -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="">Dejenos su opinion o sugerencia</label>
+		  <div class="col-md-4">                     
+		    <textarea class="form-control" ng-model="encuestaForm.opinion" required>Su opinion aqui</textarea>
+		  </div>
+		</div>
+
+		<!-- Volver -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="">¿Volveria a ordenar en este local?</label>
+		  <div class="col-md-4">
+		    <select ng-model="encuestaForm.volver" class="form-control" required>
+		      <option value="1">Si</option>
+		      <option value="2">No</option>
+		      <option value="3">Tal vez</option>
+		    </select>
+		  </div>
+		</div>
+
+		<!-- Button (Double) -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for=""></label>
+		  <div class="col-md-8">
+		    <button ng-disabled="encF.$invalid" ng-click="altaEnc(encuestaForm)" class="btn btn-success">Enviar</button>
+		    <button class="btn btn-default" data-dismiss="modal" class="btn btn-inverse">No gracias</button>
+		  </div>
+		</div>
+	</fieldset>
+	</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div id="modForm" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modificacion pedido</h4>
+      </div>
+      <div class="modal-body">
+        
+      			<form name="modF">
+      			<!-- Mod cliente escondido-->
+				<div class="form-group" ng-if="false">
+				<label for="cl">Cliente</label>
+				<div ng-if="!cl.length"><span>No hay clientes registrados</span></div>
+				<div ng-hide="!cl.length">
+				<select id="cl" class="form-control" ng-model="modForm.idCliente" required>
+				<option ng-repeat="cliente in cl = (clientes | clienteF)" ng-value="{{cliente.idUsuario}}">
+				{{cliente.nombre}}</option>
+				</select>
+				</div>
+				</div>
+
+				<div class="form-group">
+				<label for="fechped">Fecha de pedido</label>
+				<input id="fechped" class="form-control" type="date" min="{{date.min}}" max="{{date.max}}" datebinding ng-model="modForm.fecha" required>
+				</div>
+
+				<div class="form-group">
+				<label for="prod">Productos</label>
+				<select class="form-control" ng-model="modForm.productos" ng-options="producto as producto.nombre+' $'+producto.precio for producto in productos track by producto.nombre" ng-required="!modForm.ofertas" multiple>	
+				</select>
+				</div>
+
+				<div class="form-group">
+				<label for="ofer">Ofertas</label>
+				<select id="ofer" class="form-control" ng-model="modForm.ofertas"
+				ng-options="oferta as oferta.nombre for oferta in ofertas track by oferta.nombre" 
+				multiple ng-required="!modForm.productos"></select>
+				</div>
+
+				<div class="form-group">
+
+				<label for="ped">Listado pedido</label>
+
+				<ul class="list-group">
+
+				<label>Productos</label>
+    			  <ul class="list-group">
+    				<li class="list-group-item" ng-repeat="producto in modForm.productos">
+    				{{producto.nombre}}  
+    				<input type="number" min="1" numericbinding required ng-change="calcularTotal(modForm)" 
+    				ng-model="modForm.productos[$index].cantidad">
+    				</li>
+  				  </ul>
+
+  				<label>Ofertas</label>
+  				  <ul class="list-group">
+    				<li class="list-group-item" ng-repeat="oferta in modForm.ofertas">
+    				{{oferta.nombre}}  
+    				<input type="number" min="1" numericbinding ng-change="calcularTotal(modForm)" 
+    				ng-model="modForm.ofertas[$index].cantidad" required>
+    				</li>
+  				  </ul>
+  				</ul>
+				</div>
+
+				<div class="form-group">
+					<label for="total">TOTAL</label>
+					<div id="total">${{modForm.total}}</div>
+				</div>
+
+				<div class="form-group">
+				<button type="submit" 
+				class="btn btn-warning btn-lg"
+				ng-click="altaMod(modForm)" ng-disabled="modF.$invalid">
+				<span class="glyphicon glyphicon-save">&nbsp;</span>realizar pedido!</button>
+				</div>
+			</div>
+			</form>			
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+

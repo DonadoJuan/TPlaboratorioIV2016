@@ -1,0 +1,85 @@
+
+<div ui-view name="contenido">
+
+<ul class="nav nav-pills">
+  <li role="presentation"><a ng-click="logout()"> Log out</a></li>
+  <li role="presentation"><a ui-sref="estadisticas()" ng-if="acceso.admin"> Estadisticas </a></li>
+  <li role="presentation"><a ng-if="acceso.admin" data-toggle="modal" data-target="#altaLocal"> Crear local </a></li>
+</ul>
+    <!-- Page Content -->
+    <div class="container">
+        <!-- Introduction Row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                	<center>Pizzerias
+                    <footer><small>Bienvenido, elija alguna de nuestras sucursales!</small></footer>
+                  </center>
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div ng-repeat="local in locales" class="col-lg-4 col-sm-6 text-center">
+            <slider images="local.imageArray"></slider>
+                <h3><a ui-sref="navbar.infoLocal({id:local.idLocal})"> {{local.nombre}}</a>
+                </h3>
+            </div>
+        </div>
+
+        <hr>
+    </div>
+
+          <div id="altaLocal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <center><h4 class="modal-title"><strong>Alta local</strong></h4></center>
+            </div>
+            <div class="modal-body">
+
+  				<form name="localF">
+				  <div class="form-group">
+  				<label for="nombre"> Nombre </label>
+  				<input type="text" class="form-control" id="nombre" ng-model="localForm.nombre" required />
+  				</div>
+
+  				<div class="form-group">
+  				<label for="dir"> Direccion </label>
+  				<input type="text" class="form-control" id="dir" ng-model="localForm.direccion" required>
+      		</div>
+
+  				<div class="form-group">
+  				<label for="tel"> Telefono </label>
+  				<input type="number" class="form-control" id="tel" ng-model="localForm.tel" required> 
+  				</div>
+
+  				<div class="form-group">
+  					<label for="foto">Fotos</label>
+  				<ul class="list-inline">
+  					 <input type="file" class="form-control" id="foto" nv-file-select uploader="uploader" filters="filtroLoco" multiple/>
+  			        <li class="list-inline-item" ng-repeat="item in uploader.queue">
+  			           
+  			            <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+
+  			            <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+  			                <span class="glyphicon glyphicon-trash"></span> Remove
+  			            </button>
+  			        </li>       
+  			    </ul>
+  				</div>
+
+  				<a class="btn btn-info" ng-disabled="localF.$invalid || uploader.queue.length !=3" 
+  				ng-click="altaLocal(localForm)" ><span class="glyphicon glyphicon-save">&nbsp;</span>Crear local!</a>
+          
+  			</form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+</div>

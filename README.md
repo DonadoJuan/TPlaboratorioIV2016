@@ -31,7 +31,14 @@ TP LaboratorioIV 2016
 <h5>Objetivo:Lograr una aplicacion funcional sin errores.</h5>
 -------------------------------------------------------------------------------------
 
+<h5> DONADO, Juan Ignacio</h5>
 
+<li>
+	<ul><strong>Curso</strong> 4°A</ul>
+	<ul><strong>Tema elegido</strong> Pizzeria</ul>
+	<ul><strong>Email</strong> donadojuan@gmail.com</ul>
+	<ul><strong>WEB</strong><a href="http://donadojuanpizzeria.hol.es/"> Pizzeria </a></ul>
+</li>
 
 
 

@@ -1,0 +1,82 @@
+<div class="container">
+	
+	<div class="panel panel-default">
+	<div class="panel-heading">
+		<center ng-if="infoLogin.noatm">Inicie sesión para continuar</center>
+		<div ng-if="!infoLogin.noatm && infoLogin.datos && !infoLogin.estado" class="alert alert-danger">
+  		<strong>ERROR!</strong> Cuenta bloqueada, contacte al administrador del sitio
+		</div>
+		<div ng-if="!infoLogin.noatm && !infoLogin.datos" class="alert alert-warning">
+  		<strong>ERROR!</strong> Datos invalidos, reintente
+		</div>
+	</div>
+	<form name="loginF" class="panel-body">
+			<div class="form-group">
+			<label for="email" class="required-field">Email:</label> 
+			<input type="email" id="email" required id="id_username" class="form-control" ng-model="loginForm.email" maxlength="150">
+		</div>
+		<div class="form-group">
+			<label class="required-field">Password:</label> 
+			<input type="password" name="password" required class="form-control" id="id_password" ng-model="loginForm.password">
+		</div>
+		<center><button ng-disabled="loginF.$invalid" ng-click="login(loginForm)" class="btn btn-default btn-primary btn-lg" value="Login">LOGIN</button>
+		</center>
+	</form>
+		<div class="panel-footer">
+		<center>
+		<button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#regForm">Registrarme</button>
+		<button ng-click="autoLogin(1)" type="button" class="btn btn-default btn-md">Cliente</button>
+		<button ng-click="autoLogin(2)" type="button" class="btn btn-default btn-md">Empleado</button>
+		<button ng-click="autoLogin(3)" type="button" class="btn btn-default btn-md">Encargado</button>
+		<button ng-click="autoLogin(4)" type="button" class="btn btn-default btn-md">Administrador</button>
+		</center>
+		</div>
+		</div>
+	</div>
+
+<div id="regForm" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title">Registro cliente</h3>
+      </div>
+      <div class="modal-body">
+			<form name="regF">
+
+				<div class="form-group">
+				<label for="nombre"> Nombre </label>
+				<input type="text" class="form-control" id="nombre" ng-model="clienteForm.nombre" required/>
+				</div>
+
+				<div class="form-group">
+				<label for="email"> Email </label>
+				<input type="email"  class="form-control" id="email" ng-model="clienteForm.email" required> 
+				</div>
+
+				<div class="form-group">
+				<label for="pw"> Password </label>
+				<input type="password" class="form-control" id="pw" ng-model="clienteForm.password" required> 
+				</div>
+
+				<div class="form-group">
+				<label for="pwc"> Reingrese password </label>
+				<input type="password" class="form-control" id="pwc" ng-model="copiaPassword" required> 
+				</div>
+
+				<button class="btn btn-warning" name="guardar" ng-disabled="regF.$invalid || clienteForm.password != copiaPassword" 
+				ng-click="altaCliente(clienteForm)" ><span class="glyphicon glyphicon-save">&nbsp;</span>Registrarme!
+				</div>
+			</div>
+			</div>
+			</form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+	
+
+

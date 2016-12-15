@@ -1,0 +1,117 @@
+	<div class="container">
+		<div class="page-header">
+			<center> <h1> Listado de productos</h1>   </center>     
+		</div>
+		<span us-spinner spinner-key="spinner"></span>
+		<center>
+		<div class="alert alert-warning" ng-if="!productos.length"> No hay productos cargadas </div></center>
+		<table ng-if="productos.length" class="table table-striped table-bordered" id="prodT">
+			<tr>
+			    <th>DESCRIPCION</th>
+			    <th>PRECIO UNIDAD</th>
+			    <th>FOTOS</th> 
+			    <th ng-if="acceso.emp">OPCIONES</th>
+			</tr>
+			<tr ng-repeat="producto in productos">
+
+				<td> {{producto.nombre}} </td>
+				<td> ${{producto.precio}} </td>
+				<td>
+				<slider images="producto.imageArray"></slider>	 
+				</td>
+				<td ng-if="acceso.emp"> 
+				<button class="btn btn-danger btn-lg" ng-click="eliminarProd(producto.idProducto)"> Borrar </button>
+				<button class="btn btn-default btn-lg" ng-click="modoMod(producto)"
+				data-toggle="modal" data-target="#modProd">Modificar</button>
+				</td>	
+			</tr>			 
+		</table>
+
+		<button class="btn btn-default btn-lg" ng-if="productos.length" onclick="$('#prodT').tableExport({type:'pdf',pdfFontSize:'10',escape:'false',ignoreColumn:[3,4]});"> generar PDF</button>
+		<div ng-if="!exitop" class="alert alert-danger alert-dismissible">
+  			<strong>ERROR!</strong> Producto utilizado en una o mas ofertas y/o pedidos				
+		</div>
+
+		<div ng-if="acceso.emp">
+			<div class="page-header">
+			<center> <h1> Alta producto </h1>   </center>     
+			</div>
+
+			<form name="prodF">
+			<div class="form-group">
+			<label for="nombre">Nombre</label>
+			<input type="text" id="nombre" class="form-control" ng-model="productoForm.nombre" required>
+			</div>
+			<div class="form-group">
+			<label for="precio">Precio</label>
+			<input type="number" min="1" class="form-control" id="precio" ng-model="productoForm.precio" required>
+			</div>
+			<div class="form-group">
+				<label for="pics">Fotos <small>(1.5MB max)</small></label>
+				<label class="btn btn-default btn-file">
+				Buscar
+				<input style="display: none;" type="file" nv-file-select uploader="uploader" filters="filtroLoco" id="pics" multiple/>
+				</label><br>
+				<ul class="list-inline">
+				<li class="list-inline-item" ng-repeat="item in uploader.queue">			           
+			        <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+			        <button type="button" class="btn btn-danger btn-s" ng-click="item.remove()">
+			        <span class="glyphicon glyphicon-trash"></span> Eliminar
+					</button>
+				</li>       
+			</ul>
+			</div>
+				<button type="submit" class="btn btn-warning btn-lg" ng-disabled="prodF.$invalid || uploader.queue.length != 3" 
+			ng-click="altaMod(productoForm)" >
+			<span class="glyphicon glyphicon-save">&nbsp;</span>Cargar producto!
+			</button>
+			</form>
+
+		</div>
+
+<div id="modProd" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modificacion producto</h4>
+      </div>
+      <div class="modal-body">
+        
+        	<form name="modF">
+			<div class="form-group">
+			<label for="nombre">Nombre</label>
+			<input type="text" id="nombre" class="form-control" ng-model="modForm.nombre" required>
+			</div>
+			<div class="form-group">
+			<label for="precio">Precio</label>
+			<input type="number" min="1" class="form-control" id="precio" ng-model="modForm.precio" required>
+			</div>
+			<div class="form-group">
+				<label for="pics">Fotos</label>
+				<label class="btn btn-default btn-file">
+				Buscar
+				<input style="display: none;" type="file" nv-file-select uploader="modUploader" filters="filtroLoco" id="pics" multiple/>
+				</label><br>
+				<ul class="list-inline">
+				<li class="list-inline-item" ng-repeat="item in modUploader.queue">			           
+			        <div ng-show="modUploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+			        <button type="button" class="btn btn-danger btn-s" ng-click="item.remove()">
+			        <span class="glyphicon glyphicon-trash"></span> Eliminar
+					</button>
+				</li>       
+			</ul>
+			</div>
+				<button type="submit" class="btn btn-warning btn-lg" ng-disabled="modF.$invalid || modUploader.queue.length != 3" 
+			ng-click="altaMod(modForm)" >
+			<span class="glyphicon glyphicon-save">&nbsp;</span>Modificar producto!
+			</button>
+			</form>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
